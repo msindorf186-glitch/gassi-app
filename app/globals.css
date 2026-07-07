@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #eff1e9;
+  --color-surface: #fbfaf5;
+  --color-surface-raised: #ffffff;
+  --color-ink: #21231f;
+  --color-ink-soft: #585b50;
+  --color-ink-faint: #83866f;
+  --color-border: #dcdacc;
+  --color-accent: #3f7859;
+  --color-accent-strong: #2e5b41;
+  --color-accent-soft: #e2eee6;
+  --color-amber: #d98b28;
+  --color-amber-soft: #faecd4;
+  --color-critical: #b0492a;
+  --color-critical-soft: #f3ded4;
+  --color-sky: #3d6f8e;
+  --color-sky-soft: #dfeaf0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1a1c16;
+    --color-surface: #212319;
+    --color-surface-raised: #262920;
+    --color-ink: #ece9dd;
+    --color-ink-soft: #aaad9c;
+    --color-ink-faint: #767a67;
+    --color-border: #383b2e;
+    --color-accent: #74c093;
+    --color-accent-strong: #97d6b3;
+    --color-accent-soft: #263429;
+    --color-amber: #eeb15c;
+    --color-amber-soft: #3a2c15;
+    --color-critical: #e58363;
+    --color-critical-soft: #3d2620;
+    --color-sky: #8fc2dd;
+    --color-sky-soft: #1f2f38;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-ink-faint: var(--color-ink-faint);
+  --color-border: var(--color-border);
+  --color-accent: var(--color-accent);
+  --color-accent-strong: var(--color-accent-strong);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-amber: var(--color-amber);
+  --color-amber-soft: var(--color-amber-soft);
+  --color-critical: var(--color-critical);
+  --color-critical-soft: var(--color-critical-soft);
+  --color-sky: var(--color-sky);
+  --color-sky-soft: var(--color-sky-soft);
+  --font-display: ui-rounded, "SF Pro Rounded", "Segoe UI Variable", "Segoe UI",
+    system-ui, sans-serif;
+  --font-sans: -apple-system, "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
