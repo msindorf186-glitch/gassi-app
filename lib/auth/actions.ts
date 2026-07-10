@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { toLucaAuthPassword } from "@/lib/auth/pin";
 
 export type LoginState = { error?: string } | undefined;
 
@@ -33,7 +34,7 @@ export async function loginLuca(
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
     email: profile.email,
-    password: pin,
+    password: toLucaAuthPassword(pin),
   });
 
   if (error) {

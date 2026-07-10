@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth/dal";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { toLucaAuthPassword } from "@/lib/auth/pin";
 import type { UserRole } from "@/types/database";
 
 export type UserFormState = { error?: string; success?: boolean } | undefined;
@@ -25,10 +26,12 @@ export async function createUser(
     return { error: "Lucas PIN muss aus 4 Ziffern bestehen." };
   }
 
+  const authPassword = role === "luca" ? toLucaAuthPassword(password) : password;
+
   const admin = createAdminClient();
   const { data: created, error: createError } = await admin.auth.admin.createUser({
     email,
-    password,
+    password: authPassword,
     email_confirm: true,
   });
 
@@ -68,8 +71,10 @@ export async function updateUserPassword(
     return { error: "Das Passwort muss mindestens 8 Zeichen haben." };
   }
 
+  const authPassword = role === "luca" ? toLucaAuthPassword(password) : password;
+
   const admin = createAdminClient();
-  const { error } = await admin.auth.admin.updateUserById(userId, { password });
+  const { error } = await admin.auth.admin.updateUserById(userId, { password: authPassword });
 
   if (error) return { error: "Konnte nicht aktualisiert werden." };
 
