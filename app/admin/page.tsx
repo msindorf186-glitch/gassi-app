@@ -1,22 +1,28 @@
 import { getReminderSettings } from "@/lib/data/settings";
 import { getDayRatings } from "@/lib/data/admin";
 import { getSession } from "@/lib/auth/dal";
+import { berlinDateKey } from "@/lib/date-berlin";
 import { Card } from "@/components/ui/Card";
 
 export default async function AdminDashboardPage() {
   const session = await getSession();
   const now = new Date();
+  const [year, month] = berlinDateKey(now).split("-").map(Number);
   const settings = await getReminderSettings();
-  const ratings = await getDayRatings(now.getFullYear(), now.getMonth() + 1, settings.walksPerDayTarget);
+  const ratings = await getDayRatings(year, month, settings.walksPerDayTarget);
 
-  const todayKey = now.toISOString().slice(0, 10);
+  const todayKey = berlinDateKey(now);
   const today = ratings[todayKey] ?? { count: 0, rating: "red" as const };
 
   const last7 = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(now);
-    d.setDate(d.getDate() - (6 - i));
-    const key = d.toISOString().slice(0, 10);
-    return { key, label: d.toLocaleDateString("de-DE", { weekday: "short" })[0], ...(ratings[key] ?? { count: 0, rating: "red" as const }) };
+    d.setUTCDate(d.getUTCDate() - (6 - i));
+    const key = berlinDateKey(d);
+    return {
+      key,
+      label: d.toLocaleDateString("de-DE", { weekday: "short", timeZone: "Europe/Berlin" })[0],
+      ...(ratings[key] ?? { count: 0, rating: "red" as const }),
+    };
   });
 
   const monthEntries = Object.values(ratings);

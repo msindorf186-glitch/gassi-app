@@ -3,6 +3,7 @@ import { getDayRatings } from "@/lib/data/admin";
 import { getReminderSettings } from "@/lib/data/settings";
 import { MonthGrid } from "@/components/features/calendar/MonthGrid";
 import { Card } from "@/components/ui/Card";
+import { berlinDateKey } from "@/lib/date-berlin";
 
 type Props = { searchParams: Promise<{ year?: string; month?: string }> };
 
@@ -13,9 +14,10 @@ const MONATE = [
 
 export default async function KalenderPage({ searchParams }: Props) {
   const now = new Date();
+  const [nowYear, nowMonth] = berlinDateKey(now).split("-").map(Number);
   const params = await searchParams;
-  const year = Number(params.year) || now.getFullYear();
-  const month = Number(params.month) || now.getMonth() + 1;
+  const year = Number(params.year) || nowYear;
+  const month = Number(params.month) || nowMonth;
 
   const settings = await getReminderSettings();
   const ratings = await getDayRatings(year, month, settings.walksPerDayTarget);

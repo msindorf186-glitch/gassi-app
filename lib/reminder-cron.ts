@@ -8,6 +8,7 @@ import {
   type ReminderStage,
 } from "@/lib/reminder-engine";
 import type { PushStage } from "@/types/database";
+import { startOfBerlinDay } from "@/lib/date-berlin";
 
 const STAGE_ORDER: Record<Exclude<ReminderStage, "none">, number> = {
   first: 1,
@@ -46,14 +47,11 @@ export async function runReminderCheck() {
   const results = [];
 
   for (const profile of lucaProfiles ?? []) {
-    const startOfDay = new Date(now);
-    startOfDay.setHours(0, 0, 0, 0);
-
     const { data: lastWalk } = await supabase
       .from("walks")
       .select("walked_at")
       .eq("user_id", profile.user_id)
-      .gte("walked_at", startOfDay.toISOString())
+      .gte("walked_at", startOfBerlinDay(now).toISOString())
       .order("walked_at", { ascending: false })
       .limit(1)
       .maybeSingle();

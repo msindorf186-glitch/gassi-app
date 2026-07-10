@@ -1,11 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
-
-function startOfDay(date: Date) {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
+import { startOfBerlinDay } from "@/lib/date-berlin";
 
 export async function getTodayWalks(userId: string) {
   const supabase = await createClient();
@@ -13,7 +8,7 @@ export async function getTodayWalks(userId: string) {
     .from("walks")
     .select("id, walked_at, duration_min, notes, peed, pooped, drank, has_route")
     .eq("user_id", userId)
-    .gte("walked_at", startOfDay(new Date()).toISOString())
+    .gte("walked_at", startOfBerlinDay(new Date()).toISOString())
     .order("walked_at", { ascending: true });
 
   if (error) throw error;

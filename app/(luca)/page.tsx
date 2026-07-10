@@ -26,6 +26,7 @@ export default async function LucaDashboardPage() {
     weekday: "long",
     day: "numeric",
     month: "long",
+    timeZone: "Europe/Berlin",
   });
 
   return (

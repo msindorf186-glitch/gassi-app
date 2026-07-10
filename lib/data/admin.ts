@@ -1,15 +1,17 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { rateDay, type DayRating } from "@/lib/stats";
+import { berlinDateKey, berlinDateTime } from "@/lib/date-berlin";
 
-function dateKey(iso: string) {
-  return iso.slice(0, 10); // YYYY-MM-DD (Server läuft in lokaler Zeitzone)
+function pad(n: number) {
+  return String(n).padStart(2, "0");
 }
 
 export async function getMonthWalks(year: number, month: number) {
   const supabase = await createClient();
-  const start = new Date(year, month - 1, 1);
-  const end = new Date(year, month, 1);
+  const start = berlinDateTime(`${year}-${pad(month)}-01`);
+  const nextMonth = month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
+  const end = berlinDateTime(`${nextMonth.year}-${pad(nextMonth.month)}-01`);
 
   const { data, error } = await supabase
     .from("walks")
@@ -30,7 +32,7 @@ export async function getDayRatings(
   const counts: Record<string, number> = {};
 
   for (const walk of walks) {
-    const key = dateKey(walk.walked_at);
+    const key = berlinDateKey(new Date(walk.walked_at));
     counts[key] = (counts[key] ?? 0) + 1;
   }
 
@@ -43,9 +45,12 @@ export async function getDayRatings(
 
 export async function getDayDetail(dateStr: string) {
   const supabase = await createClient();
-  const start = new Date(`${dateStr}T00:00:00`);
-  const end = new Date(start);
-  end.setDate(end.getDate() + 1);
+  const start = berlinDateTime(dateStr);
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const nextDay = new Date(Date.UTC(y, m - 1, d + 1));
+  const end = berlinDateTime(
+    `${nextDay.getUTCFullYear()}-${pad(nextDay.getUTCMonth() + 1)}-${pad(nextDay.getUTCDate())}`
+  );
 
   const { data: walks, error } = await supabase
     .from("walks")
@@ -105,7 +110,7 @@ export async function getStats(days: number) {
 
   const perDay: Record<string, number> = {};
   for (const w of data ?? []) {
-    const key = dateKey(w.walked_at);
+    const key = berlinDateKey(new Date(w.walked_at));
     perDay[key] = (perDay[key] ?? 0) + 1;
   }
 

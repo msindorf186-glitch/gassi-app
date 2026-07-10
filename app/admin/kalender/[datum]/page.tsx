@@ -1,4 +1,5 @@
 import { getDayDetail } from "@/lib/data/admin";
+import { berlinDateTime } from "@/lib/date-berlin";
 import { Card } from "@/components/ui/Card";
 
 type Props = { params: Promise<{ datum: string }> };
@@ -7,11 +8,12 @@ export default async function TagesdetailPage({ params }: Props) {
   const { datum } = await params;
   const walks = await getDayDetail(datum);
 
-  const date = new Date(`${datum}T00:00:00`);
+  const date = berlinDateTime(datum);
   const dateLabel = date.toLocaleDateString("de-DE", {
     weekday: "long",
     day: "numeric",
     month: "long",
+    timeZone: "Europe/Berlin",
   });
 
   return (
@@ -31,6 +33,7 @@ export default async function TagesdetailPage({ params }: Props) {
         const time = new Date(walk.walked_at).toLocaleTimeString("de-DE", {
           hour: "2-digit",
           minute: "2-digit",
+          timeZone: "Europe/Berlin",
         });
         const checks = [
           walk.peed && "Pipi",

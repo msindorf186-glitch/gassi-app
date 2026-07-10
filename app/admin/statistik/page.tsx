@@ -1,5 +1,6 @@
 import { getStats } from "@/lib/data/admin";
 import { getReminderSettings } from "@/lib/data/settings";
+import { berlinDateKey } from "@/lib/date-berlin";
 import { BarChart } from "@/components/features/stats/BarChart";
 import { Card } from "@/components/ui/Card";
 
@@ -9,9 +10,12 @@ export default async function StatistikPage() {
 
   const days = Array.from({ length: 30 }, (_, i) => {
     const d = new Date();
-    d.setDate(d.getDate() - (29 - i));
-    const key = d.toISOString().slice(0, 10);
-    return { label: d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" }), value: stats.perDay[key] ?? 0 };
+    d.setUTCDate(d.getUTCDate() - (29 - i));
+    const key = berlinDateKey(d);
+    return {
+      label: d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", timeZone: "Europe/Berlin" }),
+      value: stats.perDay[key] ?? 0,
+    };
   });
 
   const daysWithTarget = days.filter((d) => d.value > 0);

@@ -8,6 +8,7 @@
  * Reine Funktionen, ohne DB-Zugriff — nutzbar sowohl im Dashboard (Anzeige)
  * als auch im Cron-Job (Task 5, tatsächlicher Versand).
  */
+import { berlinTimeToday } from "@/lib/date-berlin";
 
 export type ReminderSettings = {
   startTime: string; // "HH:MM"
@@ -19,13 +20,7 @@ export type ReminderSettings = {
 export type ReminderStage = "none" | "first" | "second" | "urgent";
 
 const FIRST_STAGE_OFFSET_MIN = 60;
-
-function atTimeToday(reference: Date, hhmm: string): Date {
-  const [h, m] = hhmm.split(":").map(Number);
-  const d = new Date(reference);
-  d.setHours(h, m, 0, 0);
-  return d;
-}
+const atTimeToday = berlinTimeToday;
 
 /** Startpunkt des aktuellen Zyklus: letzter Spaziergang, oder heutige Startzeit. */
 export function getCycleStart(
